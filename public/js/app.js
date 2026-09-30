@@ -466,6 +466,7 @@ async function importYouTube() {
   showBusy('Fetching audio from YouTube… (can take ~20s)');
   try {
     const res = await fetch(`/api/youtube?url=${encodeURIComponent(url)}`);
+    if (res.status === 404) throw new Error('not available on this deployment. Run the app locally with "npm start" to import from YouTube, or download the audio and drop the file in.');
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       throw new Error(body.error || `Server error ${res.status}`);
