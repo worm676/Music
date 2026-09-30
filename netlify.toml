@@ -1,0 +1,5 @@
+# The app is fully static: serve the public/ folder as-is (no build step).
+# server.js is only used for local development and YouTube import via yt-dlp.
+[build]
+  publish = "public"
+  command = ""
