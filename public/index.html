@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nightshade Studio</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23000'/><path d='M16 5l9 11-9 11-9-11z' fill='%23a855f7'/></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">◆</span><b>NIGHTSHADE</b><span>STUDIO</span></div>
+
+    <div class="transport">
+      <button id="btnStop" class="tbtn" title="Stop (return to start)">■</button>
+      <button id="btnPlay" class="tbtn play" title="Play / Pause (Space)">▶</button>
+      <button id="btnRec" class="tbtn rec" title="Record voice on armed track (R)">●</button>
+      <button id="btnLoop" class="tbtn" title="Loop region (L) — Shift+drag the ruler to set it">⟲</button>
+      <div class="lcd">
+        <span id="timeDisplay">00:00.000</span>
+        <span id="barDisplay">BAR 1.1</span>
+      </div>
+      <label class="field">BPM <input id="bpm" type="number" min="40" max="240" value="120"></label>
+      <label class="field">SNAP
+        <select id="snap">
+          <option value="0">Off</option>
+          <option value="0.25">1/16</option>
+          <option value="0.5">1/8</option>
+          <option value="1" selected>Beat</option>
+          <option value="4">Bar</option>
+        </select>
+      </label>
+      <label class="field">ZOOM <input id="zoom" type="range" min="8" max="240" value="40"></label>
+      <label class="field toggle"><input type="checkbox" id="metro"> CLICK</label>
+    </div>
+
+    <div class="actions">
+      <canvas id="meter" width="140" height="18" title="Master level"></canvas>
+      <button id="btnAddTrack" class="btn">+ Track</button>
+      <button id="btnExport" class="btn primary">Export WAV</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="browser">
+      <nav class="tabs">
+        <button data-tab="import" class="active">Import</button>
+        <button data-tab="ai">AI Beat</button>
+        <button data-tab="voice">Voice</button>
+      </nav>
+
+      <section id="tab-import" class="tab active">
+        <h3>Instrumental file</h3>
+        <label class="drop" id="dropZone">
+          <input type="file" id="fileInput" accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac" multiple hidden>
+          <span class="drop-icon">⇪</span>
+          <strong>Drop MP3 / WAV here</strong>
+          <span>or click to browse</span>
+        </label>
+
+        <h3>YouTube link</h3>
+        <div class="row">
+          <input id="ytUrl" type="url" placeholder="https://youtube.com/watch?v=…">
+          <button id="btnYt" class="btn">Import</button>
+        </div>
+        <p class="hint">Pulls the audio through the local server (needs yt-dlp). Only import audio you have the rights to use.</p>
+
+        <h3>Tips</h3>
+        <ul class="tips">
+          <li>Drag clips to move them in time or onto another track.</li>
+          <li>Drag a clip's edges to trim it.</li>
+          <li>Right-click a clip to duplicate, split or delete.</li>
+          <li>Drop audio files straight onto a track lane.</li>
+          <li>Hold <kbd>Alt</kbd> while dragging to ignore snap.</li>
+        </ul>
+      </section>
+
+      <section id="tab-ai" class="tab">
+        <h3>Describe your beat</h3>
+        <textarea id="prompt" rows="4" placeholder="dark trap beat with heavy 808s and eerie bells, 140 bpm"></textarea>
+        <div class="chips" id="chips"></div>
+        <div class="row gen-opts">
+          <label class="field">Bars
+            <select id="bars"><option>4</option><option selected>8</option><option>16</option></select>
+          </label>
+          <label class="field toggle"><input type="checkbox" id="stems" checked> Split into stems</label>
+        </div>
+        <label class="field toggle" title="Off: the prompt's genre sets the tempo. On: the beat follows the project BPM (useful to match an imported instrumental)."><input type="checkbox" id="lockBpm"> Match project BPM</label>
+        <button id="btnGen" class="btn primary wide">✦ Generate beat</button>
+        <div id="genInfo" class="gen-info"></div>
+        <p class="hint">Understands genres (trap, drill, boom bap, lo-fi, house, techno, R&amp;B, pop, reggaeton, afrobeats, drum &amp; bass, synthwave), moods (dark, happy, eerie, chill…), tempo ("140 bpm"), key ("in F# minor"), instruments (piano, rhodes, pads, bells, pluck, lead, arp) and "no drums / no melody".</p>
+      </section>
+
+      <section id="tab-voice" class="tab">
+        <h3>Voice overlay</h3>
+        <ol class="steps">
+          <li>Arm a track with its <b>R</b> button (the “Vocals” track is armed already).</li>
+          <li>Click the ruler to place the playhead where you want to start.</li>
+          <li>Press <b>●</b> (or <kbd>R</kbd>). The beat plays while you record. Press again to stop.</li>
+        </ol>
+        <label class="field block">Microphone <select id="micSelect"><option value="">Default microphone</option></select></label>
+        <label class="field toggle"><input type="checkbox" id="countIn" checked> 1-bar count-in</label>
+        <label class="field toggle"><input type="checkbox" id="monitor"> Hear myself (use headphones)</label>
+        <label class="field block">Latency offset (ms) <input type="number" id="latency" value="0" step="5"></label>
+        <div class="mic-meter"><div id="micLevel"></div></div>
+
+        <h3>Import a vocal take</h3>
+        <label class="drop small">
+          <input type="file" id="vocalInput" accept="audio/*" hidden>
+          <strong>Choose vocal file</strong>
+          <span>goes onto the armed track at the playhead</span>
+        </label>
+        <p class="hint">Use each track's <b>FX</b> knob to add reverb to vocals, <b>Pan</b> to place them in the stereo field.</p>
+      </section>
+
+      <div id="status" class="status"></div>
+    </aside>
+
+    <section class="arrange">
+      <div class="scroller" id="scroller">
+        <div class="timeline" id="timeline">
+          <div class="ruler-row">
+            <div class="corner">PLAYLIST</div>
+            <canvas id="ruler" height="30"></canvas>
+          </div>
+          <div id="rows"></div>
+          <div id="loopRegion" class="loop-region hidden"></div>
+          <div id="playhead" class="playhead"></div>
+        </div>
+        <div id="emptyHint" class="empty-hint">
+          <div class="big">◆</div>
+          <p>Drop an MP3, paste a YouTube link, or describe a beat to get started.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="ctxMenu" class="ctx-menu hidden"></div>
+  <div id="busy" class="busy hidden"><div class="spinner"></div><span id="busyText">Working…</span></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
