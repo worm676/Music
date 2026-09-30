@@ -19,6 +19,10 @@ No npm dependencies are needed. Node 18+.
 
 Optional env var: `PORT`.
 
+### Deploying to Netlify
+
+The app runs entirely in the browser, so Netlify hosts it as a static site. `netlify.toml` sets the publish directory to `public/`; no build command is needed. `server.js` is only used for local development.
+
 ## Shortcuts
 
 | Key | Action |
