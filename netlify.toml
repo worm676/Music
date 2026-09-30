@@ -1,0 +1,4 @@
+# The app is fully client-side (Web Audio API), so Netlify serves the
+# public/ folder as a static site. server.js is only for local use.
+[build]
+  publish = "public"
