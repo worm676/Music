@@ -459,30 +459,6 @@ function placeBuffer(buffer, name, { trackId = null, start = null } = {}) {
   return clip;
 }
 
-async function importYouTube() {
-  const url = $('#ytUrl').value.trim();
-  if (!url) return setStatus('Paste a YouTube link first.', 'error');
-  if (location.protocol === 'file:') return setStatus('YouTube import needs the server: run "npm start" and open http://localhost:3000', 'error');
-  showBusy('Fetching audio from YouTube… (can take ~20s)');
-  try {
-    const res = await fetch(`/api/youtube?url=${encodeURIComponent(url)}`);
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      throw new Error(body.error || `Server error ${res.status}`);
-    }
-    const title = decodeURIComponent(res.headers.get('X-Title') || 'YouTube audio');
-    showBusy('Decoding audio…');
-    const buffer = await decode(await res.arrayBuffer());
-    placeBuffer(buffer, title);
-    $('#ytUrl').value = '';
-    setStatus(`Imported “${title}”`, 'ok');
-  } catch (err) {
-    setStatus(`YouTube import failed: ${err.message}`, 'error');
-  } finally {
-    hideBusy();
-  }
-}
-
 // ======================================================================
 // AI beat generation
 // ======================================================================
@@ -1058,8 +1034,6 @@ $('#fileInput').onchange = (e) => { importFiles(e.target.files); e.target.value 
 ['dragenter', 'dragover'].forEach((ev) => dropZone.addEventListener(ev, (e) => { e.preventDefault(); dropZone.classList.add('over'); }));
 ['dragleave', 'drop'].forEach((ev) => dropZone.addEventListener(ev, () => dropZone.classList.remove('over')));
 dropZone.addEventListener('drop', (e) => { e.preventDefault(); importFiles(e.dataTransfer.files); });
-$('#btnYt').onclick = importYouTube;
-$('#ytUrl').addEventListener('keydown', (e) => { if (e.key === 'Enter') importYouTube(); });
 
 // Voice tab
 $('#vocalInput').onchange = (e) => {

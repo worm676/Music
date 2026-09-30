@@ -2,7 +2,7 @@
 
 A purple-and-black music creation studio that runs in the browser.
 
-- **Import instrumentals**: drag in MP3/WAV/M4A files, or paste a YouTube link.
+- **Import instrumentals**: drag in MP3/WAV/M4A files.
 - **Voice overlay**: record vocals over the beat from your mic (count-in, latency compensation, monitoring), or import a vocal take.
 - **FL Studio-style playlist**: tracks with clips you can drag in time and between tracks, trim from either edge, split, duplicate and delete. Snap-to-grid, zoom, loop region, metronome.
 - **Mixer per track**: volume, pan, reverb (FX), mute, solo, record-arm.
@@ -17,16 +17,7 @@ npm start            # http://localhost:3000
 
 No npm dependencies are needed. Node 18+.
 
-### YouTube import
-
-YouTube import uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) on the server:
-
-```bash
-npm run setup:youtube    # pip install yt-dlp
-```
-
-Optional env vars: `PORT`, `YTDLP_PATH` (custom yt-dlp binary), `YT_MAX_DURATION` (seconds, default 900).
-Only import audio you have the rights to use.
+Optional env var: `PORT`.
 
 ## Shortcuts
 
@@ -49,7 +40,7 @@ Only import audio you have the rights to use.
 ## Project layout
 
 ```
-server.js                      static server + /api/youtube (yt-dlp)
+server.js                      static file server
 public/index.html              UI
 public/styles.css              purple/black theme
 public/js/app.js               audio engine, playlist, recording, import/export

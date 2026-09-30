@@ -1,11 +1,10 @@
 {
   "name": "nightshade-studio",
   "version": "1.0.0",
-  "description": "Browser-based music creation studio: import MP3s or YouTube instrumentals, record voice overlays, arrange clips on a playlist, and generate beats from text descriptions.",
+  "description": "Browser-based music creation studio: import MP3 instrumentals, record voice overlays, arrange clips on a playlist, and generate beats from text descriptions.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "setup:youtube": "python3 -m pip install -U yt-dlp"
+    "start": "node server.js"
   },
   "engines": {
     "node": ">=18"
